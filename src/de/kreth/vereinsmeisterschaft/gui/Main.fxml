@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane minWidth="700.0" prefHeight="599.0" prefWidth="1023.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.kreth.vereinsmeisterschaft.gui.MainController">
+   <left>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <top>
+            <Button fx:id="newGroup" mnemonicParsing="false" onAction="#showNewGruppeDialog" text="%main.new_group" BorderPane.alignment="CENTER" />
+         </top>
+         <bottom>
+            <Button fx:id="export" mnemonicParsing="false" onAction="#export" text="%main.export" BorderPane.alignment="CENTER" />
+         </bottom>
+         <center>
+            <ListView fx:id="gruppenList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+   </left>
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <center>
+            <TableView fx:id="tblErgebnisse" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <columns>
+                <TableColumn minWidth="100.0" prefWidth="271.0" text="%main.col.starter" />
+                <TableColumn minWidth="0.0" prefWidth="75.0" text="%main.col.compulsory" />
+                  <TableColumn prefWidth="75.0" text="%main.col.voluntary" />
+                  <TableColumn prefWidth="75.0" text="%main.col.sum" />
+                  <TableColumn prefWidth="75.0" text="%main.col.place" />
+                  <TableColumn minWidth="0.0" prefWidth="75.0" sortable="false" />
+              </columns>
+            </TableView>
+         </center>
+         <top>
+            <FlowPane alignment="CENTER" columnHalignment="CENTER" hgap="10.0" prefHeight="49.0" prefWidth="683.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="newStarter" mnemonicParsing="false" text="%main.new_starter" />
+                  <Label text="%main.routine" />
+                  <ChoiceBox fx:id="cbDurchgang" prefWidth="150.0" />
+                  <Label text="%main.sorting" />
+                  <ChoiceBox fx:id="cbSorting" prefWidth="150.0" />
+               </children>
+               <opaqueInsets>
+                  <Insets left="50.0" right="50.0" />
+               </opaqueInsets>
+            </FlowPane>
+         </top>
+      </BorderPane>
+   </center>
+</BorderPane>
