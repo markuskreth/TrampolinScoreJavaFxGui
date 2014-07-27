@@ -4,5 +4,10 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/VereinsmeisterschaftProg"/>
+	<classpathentry kind="lib" path="libs/controlsfx-8.0.6.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://docs.controlsfx.org/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -25,11 +25,11 @@
          <center>
             <TableView fx:id="tblErgebnisse" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <columns>
-                <TableColumn minWidth="100.0" prefWidth="271.0" text="%main.col.starter" />
-                <TableColumn minWidth="0.0" prefWidth="75.0" text="%main.col.compulsory" />
-                  <TableColumn prefWidth="75.0" text="%main.col.voluntary" />
-                  <TableColumn prefWidth="75.0" text="%main.col.sum" />
-                  <TableColumn prefWidth="75.0" text="%main.col.place" />
+                <TableColumn fx:id="starterCol" minWidth="100.0" prefWidth="271.0" text="%main.col.starter" />
+                <TableColumn fx:id="pflichtCol" minWidth="0.0" prefWidth="75.0" text="%main.col.compulsory" />
+                  <TableColumn fx:id="kuerCol" prefWidth="75.0" text="%main.col.voluntary" />
+                  <TableColumn fx:id="resultCol" prefWidth="75.0" text="%main.col.sum" />
+                  <TableColumn fx:id="placeCol" prefWidth="75.0" text="%main.col.place" />
                   <TableColumn minWidth="0.0" prefWidth="75.0" sortable="false" />
               </columns>
             </TableView>
@@ -37,7 +37,7 @@
          <top>
             <FlowPane alignment="CENTER" columnHalignment="CENTER" hgap="10.0" prefHeight="49.0" prefWidth="683.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="newStarter" mnemonicParsing="false" text="%main.new_starter" />
+                  <Button fx:id="newStarter" mnemonicParsing="false" onAction="#showNewStarterDialog" text="%main.new_starter" />
                   <Label text="%main.routine" />
                   <ChoiceBox fx:id="cbDurchgang" prefWidth="150.0" />
                   <Label text="%main.sorting" />

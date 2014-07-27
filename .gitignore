@@ -38,6 +38,8 @@ proguard/
 *.tar
 *.zip
 
+!libs/*.jar
+
 # Logs and databases #
 ######################
 *.log
