@@ -30,7 +30,7 @@
                   <TableColumn fx:id="kuerCol" prefWidth="75.0" text="%main.col.voluntary" />
                   <TableColumn fx:id="resultCol" prefWidth="75.0" text="%main.col.sum" />
                   <TableColumn fx:id="placeCol" prefWidth="75.0" text="%main.col.place" />
-                  <TableColumn minWidth="0.0" prefWidth="75.0" sortable="false" />
+                  <TableColumn fx:id="wertungButtonCol" minWidth="0.0" prefWidth="75.0" sortable="false" />
               </columns>
             </TableView>
          </center>

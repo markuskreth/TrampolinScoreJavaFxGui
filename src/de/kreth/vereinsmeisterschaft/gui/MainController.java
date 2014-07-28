@@ -3,18 +3,25 @@ package de.kreth.vereinsmeisterschaft.gui;
 import java.io.IOException;
 import java.util.*;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import org.controlsfx.dialog.Dialogs;
 
 import de.kreth.vereinsmeisterschaftprog.business.CompetitionBusiness;
+import de.kreth.vereinsmeisterschaftprog.business.InputConverter;
 import de.kreth.vereinsmeisterschaftprog.business.MainBusiness;
 import de.kreth.vereinsmeisterschaftprog.data.*;
 import de.kreth.vereinsmeisterschaftprog.views.CompetitionView;
@@ -22,6 +29,15 @@ import de.kreth.vereinsmeisterschaftprog.views.MainView;
 
 public class MainController extends BorderPane implements MainView, CompetitionView {
 
+   private enum Column {
+      STARTER,
+      PFLICHT,
+      KUER,
+      RESULT,
+      PLATZ,
+      BUTTON
+   }
+   
    private MainBusiness business;
    
    @FXML Button newGroup;
@@ -33,35 +49,98 @@ public class MainController extends BorderPane implements MainView, CompetitionV
    @FXML ChoiceBox<Sortierung> cbSorting;
    @FXML TableView<Ergebnis> tblErgebnisse;
    @FXML TableColumn<Ergebnis, String> starterCol;
-   @FXML TableColumn pflichtCol;
-   @FXML TableColumn kuerCol;
-   @FXML TableColumn resultCol;
-   @FXML TableColumn placeCol;
+   @FXML TableColumn<Ergebnis, String> pflichtCol;
+   @FXML TableColumn<Ergebnis, String> kuerCol;
+   @FXML TableColumn<Ergebnis, String> resultCol;
+   @FXML TableColumn<Ergebnis, String> placeCol;
+   @FXML TableColumn<Ergebnis, Button> wertungButtonCol;
    
-
    private Stage primaryStage;
 
    private Stage dialogStage;
 
-   private CompetitionBusiness currentCompetition;
+   private CompetitionBusiness competitionBusiness;
    
    @FXML
    public void initialize() {
 
       if(business == null) {
+         final InputConverter converter = new InputConverter();
+         
          business = new MainBusiness(this);
+         
          cbDurchgang.getItems().addAll(Durchgang.values());
          cbDurchgang.getSelectionModel().selectFirst();
          cbSorting.getItems().addAll(Sortierung.values());
          cbSorting.getSelectionModel().selectFirst();
+         
          List<CompetitionGroup> gruppen = business.getGruppen();
          gruppenList.getItems().addAll(gruppen);
          gruppenList.getSelectionModel().selectFirst();
-         currentCompetition = business.getCompetitionBusiness();
-         currentCompetition.setView(this);
-         starterCol.setCellValueFactory(new PropertyValueFactory<Ergebnis, String>("starterName"));
-         pflichtCol.setCellValueFactory(new PropertyValueFactory<Ergebnis, String>("pflicht"));
+         
+         starterCol.setCellValueFactory(createCellValueFactory(converter, Column.STARTER));
+         pflichtCol.setCellValueFactory(createCellValueFactory(converter, Column.PFLICHT));
+         kuerCol.setCellValueFactory(createCellValueFactory(converter, Column.KUER));
+         resultCol.setCellValueFactory(createCellValueFactory(converter, Column.RESULT));
+         placeCol.setCellValueFactory(createCellValueFactory(converter, Column.PLATZ));
+         
+         wertungButtonCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Ergebnis,Button>, ObservableValue<Button>>() {
+
+            SimpleObjectProperty<Button> buttonProperty = new SimpleObjectProperty<Button>();
+            
+            @Override
+            public ObservableValue<Button> call(final CellDataFeatures<Ergebnis, Button> param) {
+               Button btn = new Button("Ändern");
+               btn.setOnAction(new EventHandler<ActionEvent>() {
+                  
+                  @Override
+                  public void handle(ActionEvent event) {
+                     Durchgang selectedDurchgang = cbDurchgang.getSelectionModel().getSelectedItem();
+                     competitionBusiness.werteErgebnis(param.getValue(), selectedDurchgang);
+                  }
+               });
+               buttonProperty.set(btn);
+               return buttonProperty;
+            }
+            
+         });
+
+         competitionBusiness = business.getCompetitionBusiness();
+         competitionBusiness.setView(this);
       }
+   }
+   
+   private Callback<TableColumn.CellDataFeatures<Ergebnis,String>, ObservableValue<String>> createCellValueFactory(final InputConverter converter,final Column col) {
+      
+      return new Callback<TableColumn.CellDataFeatures<Ergebnis,String>, ObservableValue<String>>() {
+
+         @Override
+         public ObservableValue<String> call(CellDataFeatures<Ergebnis, String> param) {
+            SimpleStringProperty property = new SimpleStringProperty();
+            switch (col) {
+               case KUER:
+                  property.setValue(converter.format(param.getValue().getKuer().getErgebnis()));
+                  break;
+               case PFLICHT:
+                  property.setValue(converter.format(param.getValue().getPflicht().getErgebnis()));
+                  break;
+               case RESULT:
+                  property.setValue(converter.format(param.getValue().getErgebnis()));
+                  break;
+               case STARTER:
+                  property.setValue(param.getValue().getStarterName());
+                  break;
+               case PLATZ:
+                  property.setValue(param.getValue().getPlatz() + ".");
+                  break;
+               default:
+                  break;
+            }
+            return property;
+         }
+         
+      };
+      
    }
    
    @Override
@@ -102,7 +181,7 @@ public class MainController extends BorderPane implements MainView, CompetitionV
    }
    
    public void createNewStarter(String starterName){
-      business.getCompetitionBusiness().newStarter(starterName);
+      competitionBusiness.newStarter(starterName);
    }
    
    public void export() {
@@ -128,7 +207,23 @@ public class MainController extends BorderPane implements MainView, CompetitionV
 
    @Override
    public void showWertung(String starterName, Wertung wertung) {
-      
+
+      ResourceBundle mainBundle = ResourceBundle.getBundle("scoringsheet", Locale.getDefault(), getClass().getClassLoader());
+      try {
+         FXMLLoader loader = new FXMLLoader(getClass().getResource("ScoringSheed.fxml"), mainBundle);
+         BorderPane root = loader.load();
+         Scene scene = new Scene(root,600,300);
+         dialogStage = new Stage();
+         dialogStage.initOwner(primaryStage);
+         dialogStage.initModality(Modality.APPLICATION_MODAL);
+         ScoringSheedController contr = loader.getController();
+         contr.setErgebnis(starterName, wertung);
+         contr.setStage(dialogStage);
+         dialogStage.setScene(scene);
+         dialogStage.showAndWait();
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
    }
    
 }

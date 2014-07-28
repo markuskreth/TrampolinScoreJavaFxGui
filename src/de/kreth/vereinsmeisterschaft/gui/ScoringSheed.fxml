@@ -60,8 +60,8 @@
    <bottom>
       <FlowPane alignment="CENTER_RIGHT" columnHalignment="RIGHT" hgap="10.0" prefHeight="52.0" prefWidth="816.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="btnOk" mnemonicParsing="false" prefHeight="25.0" prefWidth="91.0" text="%ok" />
-            <Button fx:id="btnCancel" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="%cancel" />
+            <Button mnemonicParsing="false" onAction="#onOkClick" prefHeight="25.0" prefWidth="91.0" text="%ok" />
+            <Button mnemonicParsing="false" onAction="#onCancelClick" prefHeight="25.0" prefWidth="101.0" text="%cancel" />
          </children>
          <BorderPane.margin>
             <Insets right="10.0" />

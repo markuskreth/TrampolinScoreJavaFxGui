@@ -11,16 +11,24 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import de.kreth.vereinsmeisterschaftprog.business.InputConverter;
 import de.kreth.vereinsmeisterschaftprog.data.Wertung;
 
 
 public class ScoringSheedController extends BorderPane {
 
+   private enum Kari {
+      JUDGE1,
+      JUDGE2,
+      JUDGE3,
+      JUDGE4,
+      JUDGE5,
+      DIFF
+   }
+   
    @FXML Label startername;
    @FXML Button btnChangeName;
-   @FXML Button btnOk;
-   @FXML Button btnCancel;
 
    @FXML TextField kari1;
    @FXML TextField kari2;
@@ -34,32 +42,89 @@ public class ScoringSheedController extends BorderPane {
 
    private Wertung wertung;
    private Wertung original;
+   
    private ScoringErgebnisPropertyChangeListener scoringErgebnisListener = new ScoringErgebnisPropertyChangeListener();
    private InputConverter converter = new InputConverter();
+   private Stage dialogStage;
    
    @FXML
    public void initialize() {
-      kari1.focusedProperty().addListener(new ChangeListener<Boolean>() {
-
-         @Override
-         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            if(newValue == Boolean.FALSE){
-               if(wertung != null) {
-                  try {
-                     double kari1Value = converter.convert(kari1.getText());
-                     wertung.setKari1(kari1Value);
-                     kari1.setText(converter.format(kari1Value));
-                  } catch (ParseException e) {
-                     e.printStackTrace();
-                  }
-               }
-               
-            }
-         }
-      });
+      kari1.focusedProperty().addListener(new InputChangeListener(Kari.JUDGE1));
+      kari2.focusedProperty().addListener(new InputChangeListener(Kari.JUDGE2));
+      kari3.focusedProperty().addListener(new InputChangeListener(Kari.JUDGE3));
+      kari4.focusedProperty().addListener(new InputChangeListener(Kari.JUDGE4));
+      kari5.focusedProperty().addListener(new InputChangeListener(Kari.JUDGE5));
+      kariDiff.focusedProperty().addListener(new InputChangeListener(Kari.DIFF));
    }
    
-   public void resetInput(){
+   private class InputChangeListener implements ChangeListener<Boolean> {
+      
+      private TextField field; 
+      private Kari kari;
+      
+      public InputChangeListener(Kari kari) {
+         this.kari = kari;
+         switch (kari) {
+            case DIFF:
+               field = kariDiff;
+               break;
+            case JUDGE1:
+               field = kari1;
+               break;
+            case JUDGE2:
+               field = kari2;
+               break;
+            case JUDGE3:
+               field = kari3;
+               break;
+            case JUDGE4:
+               field = kari4;
+               break;
+            case JUDGE5:
+               field = kari5;
+               break;
+         }
+      }
+      
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+
+         if(newValue == Boolean.FALSE){
+            if(wertung != null) {
+               try {
+                  double kariValue = converter.convert(field.getText());
+                  field.setText(converter.format(kariValue));
+                  switch (kari) {
+                     case DIFF:
+                        wertung.setSchwierigkeit(kariValue);
+                        break;
+                     case JUDGE1:
+                        wertung.setKari1(kariValue);
+                        break;
+                     case JUDGE2:
+                        wertung.setKari2(kariValue);
+                        break;
+                     case JUDGE3:
+                        wertung.setKari3(kariValue);
+                        break;
+                     case JUDGE4:
+                        wertung.setKari4(kariValue);
+                        break;
+                     case JUDGE5:
+                        wertung.setKari5(kariValue);
+                        break;
+                  }
+               } catch (ParseException e) {
+                  e.printStackTrace();
+               }
+            }
+            
+         }
+      }
+      
+   }
+   
+   private void resetInput(){
       wertung.setKari1(original.getKari1());
       wertung.setKari2(original.getKari1());
       wertung.setKari3(original.getKari1());
@@ -68,10 +133,11 @@ public class ScoringSheedController extends BorderPane {
       wertung.setSchwierigkeit(original.getSchwierigkeit());
    }
    
-   public void setErgebnis(Wertung wertung) {
+   public void setErgebnis(String starterName, Wertung wertung) {
       if(this.wertung != null) {
          this.wertung.removePropertyChangeListener(scoringErgebnisListener);
       }
+      this.startername.setText(starterName);
       this.wertung = wertung;
       this.original = wertung.clone();
    }
@@ -86,4 +152,18 @@ public class ScoringSheedController extends BorderPane {
       }
       
    }
+   
+   public void onCancelClick() {
+      resetInput();
+      dialogStage.close();
+   }
+   
+   public void onOkClick () {
+      dialogStage.close();      
+   }
+
+   public void setStage(Stage dialogStage) {
+      this.dialogStage = dialogStage;
+   }
+   
 }
