@@ -133,13 +133,21 @@ public class ScoringSheedController extends BorderPane {
       wertung.setSchwierigkeit(original.getSchwierigkeit());
    }
    
-   public void setErgebnis(String starterName, Wertung wertung) {
+   public void setErgebnis(String starterName, Wertung round) {
       if(this.wertung != null) {
          this.wertung.removePropertyChangeListener(scoringErgebnisListener);
       }
       this.startername.setText(starterName);
-      this.wertung = wertung;
-      this.original = wertung.clone();
+      this.wertung = round;
+      this.original = round.clone();
+      kari1.setText(converter.format(round.getKari1()));
+      kari2.setText(converter.format(round.getKari2()));
+      kari3.setText(converter.format(round.getKari3()));
+      kari4.setText(converter.format(round.getKari4()));
+      kari5.setText(converter.format(round.getKari5()));
+      kariDiff.setText(converter.format(round.getSchwierigkeit()));
+      result.setText(converter.format(round.getErgebnis()));
+      wertung.addPropertyChangeListener(scoringErgebnisListener);
    }
    
    private class ScoringErgebnisPropertyChangeListener implements PropertyChangeListener {

@@ -1,5 +1,7 @@
 package de.kreth.vereinsmeisterschaft.gui;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.*;
 
@@ -60,6 +62,8 @@ public class MainController extends BorderPane implements MainView, CompetitionV
    private Stage dialogStage;
 
    private CompetitionBusiness competitionBusiness;
+
+   private Competition currentCompetition = null;
    
    @FXML
    public void initialize() {
@@ -74,7 +78,7 @@ public class MainController extends BorderPane implements MainView, CompetitionV
          cbSorting.getItems().addAll(Sortierung.values());
          cbSorting.getSelectionModel().selectFirst();
          
-         List<CompetitionGroup> gruppen = business.getGruppen();
+         List<CompetitionGroup> gruppen = business.getCompetitionGroups();
          gruppenList.getItems().addAll(gruppen);
          gruppenList.getSelectionModel().selectFirst();
          
@@ -191,7 +195,7 @@ public class MainController extends BorderPane implements MainView, CompetitionV
    @Override
    public void groupsChanged() {
 
-      List<CompetitionGroup> gruppen = business.getGruppen();
+      List<CompetitionGroup> gruppen = business.getCompetitionGroups();
       gruppenList.getItems().clear();
       gruppenList.getItems().addAll(gruppen);      
    }
@@ -202,9 +206,34 @@ public class MainController extends BorderPane implements MainView, CompetitionV
 
    @Override
    public void setCompetition(Competition wettkampf) {
-      this.tblErgebnisse.getItems().addAll(wettkampf.getErgebnisse());
+      
+      if(currentCompetition!= null)
+         currentCompetition.removePropertyChangeListener(listener);
+      
+      currentCompetition = wettkampf;
+      List<Ergebnis> ergebnisse = wettkampf.getErgebnisse();
+      
+      refreshErgebnisTable(ergebnisse);
+      
+      wettkampf.addPropertyChangeListener(listener);
    }
 
+   private CompetitionChangeListener listener = new CompetitionChangeListener();
+   
+   private void refreshErgebnisTable(List<Ergebnis> ergebnisse) {
+      this.tblErgebnisse.getItems().clear();
+      this.tblErgebnisse.getItems().addAll(ergebnisse);
+   }
+
+   private class CompetitionChangeListener implements PropertyChangeListener {
+
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+         refreshErgebnisTable(currentCompetition.getErgebnisse());
+      }
+      
+   }
+   
    @Override
    public void showWertung(String starterName, Wertung wertung) {
 
