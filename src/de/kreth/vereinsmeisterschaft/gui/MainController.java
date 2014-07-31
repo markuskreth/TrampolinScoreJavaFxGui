@@ -7,6 +7,7 @@ import java.util.*;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -49,13 +50,13 @@ public class MainController extends BorderPane implements MainView, CompetitionV
    @FXML ChoiceBox<Durchgang> cbDurchgang;
    @FXML ListView<CompetitionGroup> gruppenList;
    @FXML ChoiceBox<Sortierung> cbSorting;
-   @FXML TableView<Ergebnis> tblErgebnisse;
-   @FXML TableColumn<Ergebnis, String> starterCol;
-   @FXML TableColumn<Ergebnis, String> pflichtCol;
-   @FXML TableColumn<Ergebnis, String> kuerCol;
-   @FXML TableColumn<Ergebnis, String> resultCol;
-   @FXML TableColumn<Ergebnis, String> placeCol;
-   @FXML TableColumn<Ergebnis, Button> wertungButtonCol;
+   @FXML TableView<Result> tblErgebnisse;
+   @FXML TableColumn<Result, String> starterCol;
+   @FXML TableColumn<Result, String> pflichtCol;
+   @FXML TableColumn<Result, String> kuerCol;
+   @FXML TableColumn<Result, String> resultCol;
+   @FXML TableColumn<Result, String> placeCol;
+   @FXML TableColumn<Result, Button> wertungButtonCol;
    
    private Stage primaryStage;
 
@@ -64,6 +65,7 @@ public class MainController extends BorderPane implements MainView, CompetitionV
    private CompetitionBusiness competitionBusiness;
 
    private Competition currentCompetition = null;
+   private Map<Result, SimpleObjectProperty<Button>> resultButtonMapper;
    
    @FXML
    public void initialize() {
@@ -72,6 +74,9 @@ public class MainController extends BorderPane implements MainView, CompetitionV
          final InputConverter converter = new InputConverter();
          
          business = new MainBusiness(this);
+         resultButtonMapper = new HashMap<>();
+
+         final ResourceBundle mainBundle = ResourceBundle.getBundle("main", Locale.getDefault(), MainController.class.getClassLoader());
          
          cbDurchgang.getItems().addAll(Durchgang.values());
          cbDurchgang.getSelectionModel().selectFirst();
@@ -81,6 +86,13 @@ public class MainController extends BorderPane implements MainView, CompetitionV
          List<CompetitionGroup> gruppen = business.getCompetitionGroups();
          gruppenList.getItems().addAll(gruppen);
          gruppenList.getSelectionModel().selectFirst();
+         gruppenList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<CompetitionGroup>() {
+
+            @Override
+            public void changed(ObservableValue<? extends CompetitionGroup> observable, CompetitionGroup oldValue, CompetitionGroup newValue) {
+               business.pflichtChange(newValue);
+            }
+         });
          
          starterCol.setCellValueFactory(createCellValueFactory(converter, Column.STARTER));
          pflichtCol.setCellValueFactory(createCellValueFactory(converter, Column.PFLICHT));
@@ -88,22 +100,25 @@ public class MainController extends BorderPane implements MainView, CompetitionV
          resultCol.setCellValueFactory(createCellValueFactory(converter, Column.RESULT));
          placeCol.setCellValueFactory(createCellValueFactory(converter, Column.PLATZ));
          
-         wertungButtonCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Ergebnis,Button>, ObservableValue<Button>>() {
-
-            SimpleObjectProperty<Button> buttonProperty = new SimpleObjectProperty<Button>();
+         
+         wertungButtonCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Result,Button>, ObservableValue<Button>>() {
             
             @Override
-            public ObservableValue<Button> call(final CellDataFeatures<Ergebnis, Button> param) {
-               Button btn = new Button("Ändern");
-               btn.setOnAction(new EventHandler<ActionEvent>() {
-                  
-                  @Override
-                  public void handle(ActionEvent event) {
-                     Durchgang selectedDurchgang = cbDurchgang.getSelectionModel().getSelectedItem();
-                     competitionBusiness.werteErgebnis(param.getValue(), selectedDurchgang);
-                  }
-               });
-               buttonProperty.set(btn);
+            public ObservableValue<Button> call(final CellDataFeatures<Result, Button> param) {
+
+               Result result = param.getValue();
+               
+               SimpleObjectProperty<Button> buttonProperty = resultButtonMapper.get(result);
+               
+               if(buttonProperty == null) {
+                  Button btn;
+                  buttonProperty = new SimpleObjectProperty<Button>();
+                  btn = new Button(mainBundle.getString("main.score"));
+                  btn.setOnAction(new ButtonEventHandler(result));
+                  buttonProperty.set(btn);
+                  resultButtonMapper.put(result, buttonProperty);
+               }
+               
                return buttonProperty;
             }
             
@@ -114,12 +129,29 @@ public class MainController extends BorderPane implements MainView, CompetitionV
       }
    }
    
-   private Callback<TableColumn.CellDataFeatures<Ergebnis,String>, ObservableValue<String>> createCellValueFactory(final InputConverter converter,final Column col) {
+   private class ButtonEventHandler implements EventHandler<ActionEvent> {
+
       
-      return new Callback<TableColumn.CellDataFeatures<Ergebnis,String>, ObservableValue<String>>() {
+      private Result ergebnis;
+
+      public ButtonEventHandler(Result ergebnis) {
+         this.ergebnis = ergebnis;
+      }
+      
+      @Override
+      public void handle(ActionEvent event) {
+         Durchgang selectedDurchgang = cbDurchgang.getSelectionModel().getSelectedItem();
+         competitionBusiness.werteErgebnis(ergebnis, selectedDurchgang);
+      }
+      
+   }
+   
+   private Callback<TableColumn.CellDataFeatures<Result,String>, ObservableValue<String>> createCellValueFactory(final InputConverter converter,final Column col) {
+      
+      return new Callback<TableColumn.CellDataFeatures<Result,String>, ObservableValue<String>>() {
 
          @Override
-         public ObservableValue<String> call(CellDataFeatures<Ergebnis, String> param) {
+         public ObservableValue<String> call(CellDataFeatures<Result, String> param) {
             SimpleStringProperty property = new SimpleStringProperty();
             switch (col) {
                case KUER:
@@ -211,7 +243,7 @@ public class MainController extends BorderPane implements MainView, CompetitionV
          currentCompetition.removePropertyChangeListener(listener);
       
       currentCompetition = wettkampf;
-      List<Ergebnis> ergebnisse = wettkampf.getErgebnisse();
+      List<Result> ergebnisse = wettkampf.getErgebnisse();
       
       refreshErgebnisTable(ergebnisse);
       
@@ -220,7 +252,7 @@ public class MainController extends BorderPane implements MainView, CompetitionV
 
    private CompetitionChangeListener listener = new CompetitionChangeListener();
    
-   private void refreshErgebnisTable(List<Ergebnis> ergebnisse) {
+   private void refreshErgebnisTable(List<Result> ergebnisse) {
       this.tblErgebnisse.getItems().clear();
       this.tblErgebnisse.getItems().addAll(ergebnisse);
    }

@@ -9,7 +9,7 @@
 
 <BorderPane prefHeight="307.0" prefWidth="816.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.kreth.vereinsmeisterschaft.gui.ScoringSheedController">
    <center>
-      <GridPane hgap="10.0" prefHeight="105.0" prefWidth="776.0" BorderPane.alignment="CENTER">
+      <GridPane focusTraversable="true" hgap="10.0" prefHeight="105.0" prefWidth="776.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -22,16 +22,15 @@
           <RowConstraints maxHeight="131.0" minHeight="10.0" prefHeight="131.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" text="%judge1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-            <Label alignment="CENTER" contentDisplay="CENTER" text="%judge2" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-            <Label text="%judge3" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
-            <Label text="%judge4" GridPane.columnIndex="3" GridPane.halignment="CENTER" />
-            <Label text="%judge5" GridPane.columnIndex="4" GridPane.halignment="CENTER" />
+            <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" text="%judge1" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+            <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" text="%judge2" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+            <Label contentDisplay="CENTER" focusTraversable="false" text="%judge3" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+            <Label alignment="CENTER" focusTraversable="false" text="%judge4" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.halignment="CENTER" />
+            <Label alignment="CENTER" focusTraversable="false" text="%judge5" textAlignment="CENTER" GridPane.columnIndex="4" GridPane.halignment="CENTER" />
             <TextField fx:id="kari1" prefHeight="25.0" prefWidth="125.0" GridPane.rowIndex="1" />
             <TextField fx:id="kari2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="kari3" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <TextField fx:id="kari4" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <TextField fx:id="kari5" GridPane.columnIndex="4" GridPane.rowIndex="1" />
          </children>
          <BorderPane.margin>
@@ -42,14 +41,14 @@
    <top>
       <BorderPane prefHeight="53.0" prefWidth="816.0" BorderPane.alignment="CENTER">
          <center>
-            <Label fx:id="startername" text="&lt;StarterName&gt;" BorderPane.alignment="CENTER_LEFT">
+            <Label fx:id="startername" focusTraversable="false" text="&lt;StarterName&gt;" BorderPane.alignment="CENTER_LEFT">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>
             </Label>
          </center>
          <right>
-            <Button fx:id="btnChangeName" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" text="%changeStarterName" BorderPane.alignment="CENTER">
+            <Button fx:id="btnChangeName" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" mnemonicParsing="false" text="%changeStarterName" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets right="10.0" />
                </BorderPane.margin>
@@ -60,8 +59,8 @@
    <bottom>
       <FlowPane alignment="CENTER_RIGHT" columnHalignment="RIGHT" hgap="10.0" prefHeight="52.0" prefWidth="816.0" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" onAction="#onOkClick" prefHeight="25.0" prefWidth="91.0" text="%ok" />
-            <Button mnemonicParsing="false" onAction="#onCancelClick" prefHeight="25.0" prefWidth="101.0" text="%cancel" />
+            <Button defaultButton="true" mnemonicParsing="false" onAction="#onOkClick" prefHeight="25.0" prefWidth="91.0" text="%ok" />
+            <Button cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" prefHeight="25.0" prefWidth="101.0" text="%cancel" />
          </children>
          <BorderPane.margin>
             <Insets right="10.0" />
@@ -69,7 +68,7 @@
       </FlowPane>
    </bottom>
    <right>
-      <GridPane hgap="20.0" prefHeight="111.0" prefWidth="220.0" BorderPane.alignment="CENTER">
+      <GridPane focusTraversable="true" hgap="20.0" prefHeight="111.0" prefWidth="220.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -79,9 +78,9 @@
           <RowConstraints maxHeight="114.0" minHeight="10.0" prefHeight="114.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="%judge7" GridPane.halignment="CENTER" />
-            <Label text="%result" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-            <Label fx:id="result" alignment="CENTER" contentDisplay="CENTER" prefHeight="15.0" prefWidth="71.0" text="24,1" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Label focusTraversable="false" text="%judge7" GridPane.halignment="CENTER" />
+            <Label focusTraversable="false" text="%result" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+            <Label fx:id="result" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="15.0" prefWidth="71.0" text="24,1" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <TextField fx:id="kariDiff" GridPane.rowIndex="1" />
          </children>
          <BorderPane.margin>

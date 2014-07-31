@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import de.kreth.vereinsmeisterschaftprog.business.InputConverter;
+import de.kreth.vereinsmeisterschaftprog.data.Durchgang;
 import de.kreth.vereinsmeisterschaftprog.data.Wertung;
 
 
@@ -145,8 +146,17 @@ public class ScoringSheedController extends BorderPane {
       kari3.setText(converter.format(round.getKari3()));
       kari4.setText(converter.format(round.getKari4()));
       kari5.setText(converter.format(round.getKari5()));
-      kariDiff.setText(converter.format(round.getSchwierigkeit()));
+      
+      if(round.getDurchgang()==Durchgang.PFLICHT) {
+         kariDiff.setDisable(true);
+         kariDiff.setText("");
+         kariDiff.setVisible(false);
+      } else {
+         kariDiff.setText(converter.format(round.getSchwierigkeit()));
+      }
+
       result.setText(converter.format(round.getErgebnis()));
+      
       wertung.addPropertyChangeListener(scoringErgebnisListener);
    }
    
