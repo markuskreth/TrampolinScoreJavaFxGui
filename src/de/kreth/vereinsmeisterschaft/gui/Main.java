@@ -3,12 +3,14 @@ package de.kreth.vereinsmeisterschaft.gui;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import de.kreth.vereinsmeisterschaftprog.FactoryProductive;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import de.kreth.vereinsmeisterschaftprog.FactoryProductive;
 
 
 public class Main extends Application {
@@ -16,8 +18,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 
-      @SuppressWarnings("unused")
-      FactoryProductive factoryProductive = new FactoryProductive();
+      final FactoryProductive factoryProductive = new FactoryProductive();
       
 		try {
 		   FXMLLoader loader = new FXMLLoader(Main.class.getResource("Main.fxml"));
@@ -33,7 +34,14 @@ public class Main extends Application {
 			controller.setPrimaryStage(primaryStage);
 		} catch(Exception e) {
 			e.printStackTrace();
+			factoryProductive.getPersister().close();
 		}
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+         @Override
+         public void handle(WindowEvent event) {
+            factoryProductive.getPersister().close();
+         }});
 	}
 	
 	public static void main(String[] args) {
