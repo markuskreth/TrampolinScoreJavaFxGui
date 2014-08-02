@@ -1,4 +1,4 @@
-package de.kreth.vereinsmeisterschaft.gui;
+package de.kreth.trampolinscore.gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;

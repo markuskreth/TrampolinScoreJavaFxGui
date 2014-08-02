@@ -1,4 +1,4 @@
-package de.kreth.vereinsmeisterschaft.gui;
+package de.kreth.trampolinscore.gui;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -23,12 +23,12 @@ import javafx.util.Callback;
 
 import org.controlsfx.dialog.Dialogs;
 
-import de.kreth.vereinsmeisterschaftprog.business.CompetitionBusiness;
-import de.kreth.vereinsmeisterschaftprog.business.InputConverter;
-import de.kreth.vereinsmeisterschaftprog.business.MainBusiness;
-import de.kreth.vereinsmeisterschaftprog.data.*;
-import de.kreth.vereinsmeisterschaftprog.views.CompetitionView;
-import de.kreth.vereinsmeisterschaftprog.views.MainView;
+import de.kreth.trampolinscore.business.CompetitionBusiness;
+import de.kreth.trampolinscore.business.InputConverter;
+import de.kreth.trampolinscore.business.MainBusiness;
+import de.kreth.trampolinscore.data.*;
+import de.kreth.trampolinscore.views.CompetitionView;
+import de.kreth.trampolinscore.views.MainView;
 
 public class MainController extends BorderPane implements MainView, CompetitionView {
 
@@ -47,9 +47,9 @@ public class MainController extends BorderPane implements MainView, CompetitionV
    @FXML Button export;
 
    @FXML Button newStarter;
-   @FXML ChoiceBox<Durchgang> cbDurchgang;
+   @FXML ChoiceBox<RoutineType> cbDurchgang;
    @FXML ListView<CompetitionGroup> gruppenList;
-   @FXML ChoiceBox<Sortierung> cbSorting;
+   @FXML ChoiceBox<Sorting> cbSorting;
    @FXML TableView<Result> tblErgebnisse;
    @FXML TableColumn<Result, String> starterCol;
    @FXML TableColumn<Result, String> pflichtCol;
@@ -78,9 +78,9 @@ public class MainController extends BorderPane implements MainView, CompetitionV
 
          final ResourceBundle mainBundle = ResourceBundle.getBundle("main", Locale.getDefault(), MainController.class.getClassLoader());
          
-         cbDurchgang.getItems().addAll(Durchgang.values());
+         cbDurchgang.getItems().addAll(RoutineType.values());
          cbDurchgang.getSelectionModel().selectFirst();
-         cbSorting.getItems().addAll(Sortierung.values());
+         cbSorting.getItems().addAll(Sorting.values());
          cbSorting.getSelectionModel().selectFirst();
          
          List<CompetitionGroup> gruppen = business.getCompetitionGroups();
@@ -140,7 +140,7 @@ public class MainController extends BorderPane implements MainView, CompetitionV
       
       @Override
       public void handle(ActionEvent event) {
-         Durchgang selectedDurchgang = cbDurchgang.getSelectionModel().getSelectedItem();
+         RoutineType selectedDurchgang = cbDurchgang.getSelectionModel().getSelectedItem();
          competitionBusiness.werteErgebnis(ergebnis, selectedDurchgang);
       }
       
@@ -155,10 +155,10 @@ public class MainController extends BorderPane implements MainView, CompetitionV
             SimpleStringProperty property = new SimpleStringProperty();
             switch (col) {
                case KUER:
-                  property.setValue(converter.format(param.getValue().getKuer().getErgebnis()));
+                  property.setValue(converter.format(param.getValue().getKuer().getResult()));
                   break;
                case PFLICHT:
-                  property.setValue(converter.format(param.getValue().getPflicht().getErgebnis()));
+                  property.setValue(converter.format(param.getValue().getPflicht().getResult()));
                   break;
                case RESULT:
                   property.setValue(converter.format(param.getValue().getErgebnis()));
@@ -267,7 +267,7 @@ public class MainController extends BorderPane implements MainView, CompetitionV
    }
    
    @Override
-   public void showWertung(String starterName, Wertung wertung) {
+   public void showWertung(String starterName, Routine wertung) {
 
       ResourceBundle mainBundle = ResourceBundle.getBundle("scoringsheet", Locale.getDefault(), getClass().getClassLoader());
       try {

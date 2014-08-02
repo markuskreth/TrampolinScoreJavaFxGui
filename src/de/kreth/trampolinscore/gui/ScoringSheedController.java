@@ -1,4 +1,4 @@
-package de.kreth.vereinsmeisterschaft.gui;
+package de.kreth.trampolinscore.gui;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -12,9 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import de.kreth.vereinsmeisterschaftprog.business.InputConverter;
-import de.kreth.vereinsmeisterschaftprog.data.Durchgang;
-import de.kreth.vereinsmeisterschaftprog.data.Wertung;
+import de.kreth.trampolinscore.business.InputConverter;
+import de.kreth.trampolinscore.data.RoutineType;
+import de.kreth.trampolinscore.data.Routine;
 
 
 public class ScoringSheedController extends BorderPane {
@@ -41,8 +41,8 @@ public class ScoringSheedController extends BorderPane {
 
    @FXML Label result;
 
-   private Wertung wertung;
-   private Wertung original;
+   private Routine wertung;
+   private Routine original;
    
    private ScoringErgebnisPropertyChangeListener scoringErgebnisListener = new ScoringErgebnisPropertyChangeListener();
    private InputConverter converter = new InputConverter();
@@ -97,22 +97,22 @@ public class ScoringSheedController extends BorderPane {
                   field.setText(converter.format(kariValue));
                   switch (kari) {
                      case DIFF:
-                        wertung.setSchwierigkeit(kariValue);
+                        wertung.setTariff(kariValue);
                         break;
                      case JUDGE1:
-                        wertung.setKari1(kariValue);
+                        wertung.setJudge1(kariValue);
                         break;
                      case JUDGE2:
-                        wertung.setKari2(kariValue);
+                        wertung.setJudge2(kariValue);
                         break;
                      case JUDGE3:
-                        wertung.setKari3(kariValue);
+                        wertung.setJudge3(kariValue);
                         break;
                      case JUDGE4:
-                        wertung.setKari4(kariValue);
+                        wertung.setJudge4(kariValue);
                         break;
                      case JUDGE5:
-                        wertung.setKari5(kariValue);
+                        wertung.setJudge5(kariValue);
                         break;
                   }
                } catch (ParseException e) {
@@ -126,36 +126,36 @@ public class ScoringSheedController extends BorderPane {
    }
    
    private void resetInput(){
-      wertung.setKari1(original.getKari1());
-      wertung.setKari2(original.getKari1());
-      wertung.setKari3(original.getKari1());
-      wertung.setKari4(original.getKari1());
-      wertung.setKari5(original.getKari1());
-      wertung.setSchwierigkeit(original.getSchwierigkeit());
+      wertung.setJudge1(original.getJudge1());
+      wertung.setJudge2(original.getJudge1());
+      wertung.setJudge3(original.getJudge1());
+      wertung.setJudge4(original.getJudge1());
+      wertung.setJudge5(original.getJudge1());
+      wertung.setTariff(original.getTariff());
    }
    
-   public void setErgebnis(String starterName, Wertung round) {
+   public void setErgebnis(String starterName, Routine round) {
       if(this.wertung != null) {
          this.wertung.removePropertyChangeListener(scoringErgebnisListener);
       }
       this.startername.setText(starterName);
       this.wertung = round;
       this.original = round.clone();
-      kari1.setText(converter.format(round.getKari1()));
-      kari2.setText(converter.format(round.getKari2()));
-      kari3.setText(converter.format(round.getKari3()));
-      kari4.setText(converter.format(round.getKari4()));
-      kari5.setText(converter.format(round.getKari5()));
+      kari1.setText(converter.format(round.getJudge1()));
+      kari2.setText(converter.format(round.getJudge2()));
+      kari3.setText(converter.format(round.getJudge3()));
+      kari4.setText(converter.format(round.getJudge4()));
+      kari5.setText(converter.format(round.getJudge5()));
       
-      if(round.getDurchgang()==Durchgang.PFLICHT) {
+      if(round.getRoutine()==RoutineType.COMPULSORY) {
          kariDiff.setDisable(true);
          kariDiff.setText("");
          kariDiff.setVisible(false);
       } else {
-         kariDiff.setText(converter.format(round.getSchwierigkeit()));
+         kariDiff.setText(converter.format(round.getTariff()));
       }
 
-      result.setText(converter.format(round.getErgebnis()));
+      result.setText(converter.format(round.getResult()));
       
       wertung.addPropertyChangeListener(scoringErgebnisListener);
    }
@@ -164,8 +164,8 @@ public class ScoringSheedController extends BorderPane {
 
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
-         if(evt.getPropertyName().matches(Wertung.ERGEBNIS_CHANGE_PROPERTY)) {
-            result.setText(converter.format(wertung.getErgebnis()));
+         if(evt.getPropertyName().matches(Routine.RESULT_CHANGE_PROPERTY)) {
+            result.setText(converter.format(wertung.getResult()));
          }
       }
       

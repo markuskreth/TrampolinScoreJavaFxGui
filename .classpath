@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/VereinsmeisterschaftProg"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TrampolinScore"/>
 	<classpathentry kind="lib" path="libs/controlsfx-8.0.6.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://docs.controlsfx.org/"/>

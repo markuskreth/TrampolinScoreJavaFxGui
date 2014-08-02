@@ -1,4 +1,4 @@
-package de.kreth.vereinsmeisterschaft.gui;
+package de.kreth.trampolinscore.gui;
 	
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -10,7 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import de.kreth.vereinsmeisterschaftprog.FactoryProductive;
+import de.kreth.trampolinscore.FactoryProductive;
 
 
 public class Main extends Application {
