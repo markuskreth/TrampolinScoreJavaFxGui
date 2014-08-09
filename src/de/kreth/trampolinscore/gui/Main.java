@@ -1,5 +1,7 @@
 package de.kreth.trampolinscore.gui;
 	
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -21,8 +23,16 @@ public class Main extends Application {
       final FactoryProductive factoryProductive = new FactoryProductive();
       
 		try {
-		   FXMLLoader loader = new FXMLLoader(Main.class.getResource("Main.fxml"));
-		   ResourceBundle mainBundle = ResourceBundle.getBundle("main", Locale.getDefault(), MainController.class.getClassLoader());
+		   URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+		   for(URL url: contextClassLoader.getURLs()) {
+		      System.out.println(url.getFile());
+		   }
+         System.out.println();
+         System.out.println();
+
+		   ResourceBundle mainBundle = ResourceBundle.getBundle(Main.class.getSimpleName(), Locale.getDefault(), getClass().getClassLoader());
+		   
+		   FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
 		   loader.setResources(mainBundle);
 		   BorderPane root = loader.load();
 		   Scene scene = new Scene(root,900,600);

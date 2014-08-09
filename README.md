@@ -1,4 +1,4 @@
-vereinsmeisterschaftJavaFxClient
+trampolinscoreJavaFxClient
 ================================
 
-vereinsmeisterschaft Client using the JavaFX Framework 
+trampolinscore Client using the JavaFX Framework 

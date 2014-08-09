@@ -23,10 +23,10 @@ import javafx.util.Callback;
 
 import org.controlsfx.dialog.Dialogs;
 
-import de.kreth.trampolinscore.business.CompetitionBusiness;
-import de.kreth.trampolinscore.business.InputConverter;
-import de.kreth.trampolinscore.business.MainBusiness;
+import de.kreth.trampolinscore.Factory;
+import de.kreth.trampolinscore.business.*;
 import de.kreth.trampolinscore.data.*;
+import de.kreth.trampolinscore.db.Persister;
 import de.kreth.trampolinscore.views.CompetitionView;
 import de.kreth.trampolinscore.views.MainView;
 
@@ -72,11 +72,13 @@ public class MainController extends BorderPane implements MainView, CompetitionV
 
       if(business == null) {
          final InputConverter converter = new InputConverter();
+         Persister p = Factory.getInstance().getPersister();
+          
+         business = new MainBusiness(this, p);
          
-         business = new MainBusiness(this);
          resultButtonMapper = new HashMap<>();
 
-         final ResourceBundle mainBundle = ResourceBundle.getBundle("main", Locale.getDefault(), MainController.class.getClassLoader());
+         final ResourceBundle mainBundle = ResourceBundle.getBundle(Main.class.getSimpleName(), Locale.getDefault(), MainController.class.getClassLoader());
          
          cbDurchgang.getItems().addAll(RoutineType.values());
          cbDurchgang.getSelectionModel().selectFirst();
@@ -90,7 +92,7 @@ public class MainController extends BorderPane implements MainView, CompetitionV
 
             @Override
             public void changed(ObservableValue<? extends CompetitionGroup> observable, CompetitionGroup oldValue, CompetitionGroup newValue) {
-               business.pflichtChange(newValue);
+               business.changeCompetitionGroup(newValue);
             }
          });
          
@@ -155,13 +157,13 @@ public class MainController extends BorderPane implements MainView, CompetitionV
             SimpleStringProperty property = new SimpleStringProperty();
             switch (col) {
                case KUER:
-                  property.setValue(converter.format(param.getValue().getKuer().getResult()));
+                  property.setValue(converter.format(param.getValue().getKuer().getResult().doubleValue()));
                   break;
                case PFLICHT:
-                  property.setValue(converter.format(param.getValue().getPflicht().getResult()));
+                  property.setValue(converter.format(param.getValue().getPflicht().getResult().doubleValue()));
                   break;
                case RESULT:
-                  property.setValue(converter.format(param.getValue().getErgebnis()));
+                  property.setValue(converter.format(param.getValue().getResult().doubleValue()));
                   break;
                case STARTER:
                   property.setValue(param.getValue().getStarterName());
@@ -227,9 +229,14 @@ public class MainController extends BorderPane implements MainView, CompetitionV
    @Override
    public void groupsChanged() {
 
+      CompetitionGroup selectedItem = gruppenList.getSelectionModel().getSelectedItem();
       List<CompetitionGroup> gruppen = business.getCompetitionGroups();
       gruppenList.getItems().clear();
-      gruppenList.getItems().addAll(gruppen);      
+      gruppenList.getItems().addAll(gruppen);
+      if(selectedItem != null)
+         gruppenList.getSelectionModel().select(selectedItem);
+      else if(gruppen.size()>0)
+         gruppenList.getSelectionModel().selectFirst();
    }
 
    public void setPrimaryStage(Stage primaryStage) {
@@ -240,14 +247,17 @@ public class MainController extends BorderPane implements MainView, CompetitionV
    public void setCompetition(Competition wettkampf) {
       
       if(currentCompetition!= null)
-         currentCompetition.removePropertyChangeListener(listener);
+         currentCompetition.getCurrentPlaceCalculator().removePropertyChangeListener(listener);
       
       currentCompetition = wettkampf;
-      List<Result> ergebnisse = wettkampf.getErgebnisse();
+      if(currentCompetition != null) {
+         List<Result> ergebnisse = currentCompetition.getResults();
+         
+         refreshErgebnisTable(ergebnisse);
+         
+         currentCompetition.getCurrentPlaceCalculator().addPropertyChangeListener(listener);
+      }
       
-      refreshErgebnisTable(ergebnisse);
-      
-      wettkampf.addPropertyChangeListener(listener);
    }
 
    private CompetitionChangeListener listener = new CompetitionChangeListener();
@@ -261,7 +271,7 @@ public class MainController extends BorderPane implements MainView, CompetitionV
 
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
-         refreshErgebnisTable(currentCompetition.getErgebnisse());
+         refreshErgebnisTable(currentCompetition.getResults());
       }
       
    }

@@ -2,6 +2,7 @@ package de.kreth.trampolinscore.gui;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.math.BigDecimal;
 import java.text.ParseException;
 
 import javafx.beans.value.ChangeListener;
@@ -93,8 +94,8 @@ public class ScoringSheedController extends BorderPane {
          if(newValue == Boolean.FALSE){
             if(wertung != null) {
                try {
-                  double kariValue = converter.convert(field.getText());
-                  field.setText(converter.format(kariValue));
+                  BigDecimal kariValue = BigDecimal.valueOf(converter.convert(field.getText()));
+                  field.setText(converter.format(kariValue.doubleValue()));
                   switch (kari) {
                      case DIFF:
                         wertung.setTariff(kariValue);
@@ -141,21 +142,21 @@ public class ScoringSheedController extends BorderPane {
       this.startername.setText(starterName);
       this.wertung = round;
       this.original = round.clone();
-      kari1.setText(converter.format(round.getJudge1()));
-      kari2.setText(converter.format(round.getJudge2()));
-      kari3.setText(converter.format(round.getJudge3()));
-      kari4.setText(converter.format(round.getJudge4()));
-      kari5.setText(converter.format(round.getJudge5()));
+      kari1.setText(converter.format(round.getJudge1().doubleValue()));
+      kari2.setText(converter.format(round.getJudge2().doubleValue()));
+      kari3.setText(converter.format(round.getJudge3().doubleValue()));
+      kari4.setText(converter.format(round.getJudge4().doubleValue()));
+      kari5.setText(converter.format(round.getJudge5().doubleValue()));
       
       if(round.getRoutine()==RoutineType.COMPULSORY) {
          kariDiff.setDisable(true);
          kariDiff.setText("");
          kariDiff.setVisible(false);
       } else {
-         kariDiff.setText(converter.format(round.getTariff()));
+         kariDiff.setText(converter.format(round.getTariff().doubleValue()));
       }
 
-      result.setText(converter.format(round.getResult()));
+      result.setText(converter.format(round.getResult().doubleValue()));
       
       wertung.addPropertyChangeListener(scoringErgebnisListener);
    }
@@ -165,7 +166,7 @@ public class ScoringSheedController extends BorderPane {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
          if(evt.getPropertyName().matches(Routine.RESULT_CHANGE_PROPERTY)) {
-            result.setText(converter.format(wertung.getResult()));
+            result.setText(converter.format(wertung.getResult().doubleValue()));
          }
       }
       
