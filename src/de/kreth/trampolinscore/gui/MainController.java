@@ -157,10 +157,10 @@ public class MainController extends BorderPane implements MainView, CompetitionV
             SimpleStringProperty property = new SimpleStringProperty();
             switch (col) {
                case KUER:
-                  property.setValue(converter.format(param.getValue().getKuer().getResult().doubleValue()));
+                  property.setValue(converter.format(param.getValue().getVoluntary().getResult().doubleValue()));
                   break;
                case PFLICHT:
-                  property.setValue(converter.format(param.getValue().getPflicht().getResult().doubleValue()));
+                  property.setValue(converter.format(param.getValue().getCompulsory().getResult().doubleValue()));
                   break;
                case RESULT:
                   property.setValue(converter.format(param.getValue().getResult().doubleValue()));

@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import de.kreth.trampolinscore.business.InputConverter;
+import de.kreth.trampolinscore.data.Routine.Judge;
 import de.kreth.trampolinscore.data.RoutineType;
 import de.kreth.trampolinscore.data.Routine;
 
@@ -96,26 +97,32 @@ public class ScoringSheedController extends BorderPane {
                try {
                   BigDecimal kariValue = BigDecimal.valueOf(converter.convert(field.getText()));
                   field.setText(converter.format(kariValue.doubleValue()));
+                  
+                  Judge judge = null;
+                  
                   switch (kari) {
                      case DIFF:
-                        wertung.setTariff(kariValue);
+                        judge = Judge.TARIFF;
                         break;
                      case JUDGE1:
-                        wertung.setJudge1(kariValue);
+                        judge = Judge.JUDGE1;
                         break;
                      case JUDGE2:
-                        wertung.setJudge2(kariValue);
+                        judge = Judge.JUDGE2;
                         break;
                      case JUDGE3:
-                        wertung.setJudge3(kariValue);
+                        judge = Judge.JUDGE3;
                         break;
                      case JUDGE4:
-                        wertung.setJudge4(kariValue);
+                        judge = Judge.JUDGE4;
                         break;
                      case JUDGE5:
-                        wertung.setJudge5(kariValue);
+                        judge = Judge.JUDGE5;
                         break;
                   }
+
+                  wertung.setJudge(kariValue, judge);
+                  
                } catch (ParseException e) {
                   e.printStackTrace();
                }
@@ -127,12 +134,12 @@ public class ScoringSheedController extends BorderPane {
    }
    
    private void resetInput(){
-      wertung.setJudge1(original.getJudge1());
-      wertung.setJudge2(original.getJudge1());
-      wertung.setJudge3(original.getJudge1());
-      wertung.setJudge4(original.getJudge1());
-      wertung.setJudge5(original.getJudge1());
-      wertung.setTariff(original.getTariff());
+      wertung.setJudge(original.getJudge(Judge.JUDGE1),Judge.JUDGE1);
+      wertung.setJudge(original.getJudge(Judge.JUDGE2),Judge.JUDGE2);
+      wertung.setJudge(original.getJudge(Judge.JUDGE3),Judge.JUDGE3);
+      wertung.setJudge(original.getJudge(Judge.JUDGE4),Judge.JUDGE4);
+      wertung.setJudge(original.getJudge(Judge.JUDGE5),Judge.JUDGE5);
+      wertung.setJudge(original.getJudge(Judge.TARIFF),Judge.TARIFF);
    }
    
    public void setErgebnis(String starterName, Routine round) {
@@ -142,18 +149,18 @@ public class ScoringSheedController extends BorderPane {
       this.startername.setText(starterName);
       this.wertung = round;
       this.original = round.clone();
-      kari1.setText(converter.format(round.getJudge1().doubleValue()));
-      kari2.setText(converter.format(round.getJudge2().doubleValue()));
-      kari3.setText(converter.format(round.getJudge3().doubleValue()));
-      kari4.setText(converter.format(round.getJudge4().doubleValue()));
-      kari5.setText(converter.format(round.getJudge5().doubleValue()));
+      kari1.setText(converter.format(round.getJudge(Judge.JUDGE1).doubleValue()));
+      kari2.setText(converter.format(round.getJudge(Judge.JUDGE2).doubleValue()));
+      kari3.setText(converter.format(round.getJudge(Judge.JUDGE3).doubleValue()));
+      kari4.setText(converter.format(round.getJudge(Judge.JUDGE4).doubleValue()));
+      kari5.setText(converter.format(round.getJudge(Judge.JUDGE5).doubleValue()));
       
       if(round.getRoutine()==RoutineType.COMPULSORY) {
          kariDiff.setDisable(true);
          kariDiff.setText("");
          kariDiff.setVisible(false);
       } else {
-         kariDiff.setText(converter.format(round.getTariff().doubleValue()));
+         kariDiff.setText(converter.format(round.getJudge(Judge.TARIFF).doubleValue()));
       }
 
       result.setText(converter.format(round.getResult().doubleValue()));

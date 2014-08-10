@@ -9,5 +9,6 @@
 			<attribute name="javadoc_location" value="http://docs.controlsfx.org/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/log4j"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
